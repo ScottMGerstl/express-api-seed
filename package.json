@@ -1,0 +1,39 @@
+{
+  "name": "express-api-seed",
+  "version": "0.1.0",
+  "description": "seed project for creating a node api based on express",
+  "main": "dist/server.js",
+  "scripts": {
+    "start": "node dist/server.js",
+    "build": "npm run clean && npm run typings && npm run lint && npm run tsc",
+    "clean": "rimraf ./bundles/ ./dist/ && npm run clean-src",
+    "clean-src": "rimraf ./src/**/*.js ./src/**/*.d.ts",
+    "lint": "tslint ./src/**/*.ts",
+    "tsc": "tsc --project . --declaration",
+    "test": "npm run build && npm run coverage",
+    "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha -- ./dist/test/**/*.spec.js -R spec",
+    "typings": "typings install"
+  },
+  "keywords": [
+    "node",
+    "express",
+    "api",
+    "seed"
+  ],
+  "author": "Scott M Gerstl <scott.gerstl@outlook.com>",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "express": "^4.13.4"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "istanbul": "^0.4.4",
+    "mocha": "^2.5.3",
+    "rimraf": "^2.5.2",
+    "tslint": "^3.11.0",
+    "typescript": "^1.8.10",
+    "typings": "^0.8.1",
+    "uglify-js": "^2.6.4"
+  }
+}
