@@ -39,3 +39,14 @@ When supplying information in the request body, the Content-Type header is requi
 Content-Type: application/json
 ```
 
+## Building and Running the API
+
+### Building
+
+`npm run build`
+
+### Running
+
+`npm start`
+
+You will need to rebuild and restart the api after making changes
