@@ -1,25 +1,25 @@
-// let password = require('../services/passwordService.js');
-// let validation = require('../services/validationService.js');
-// let repo = require('../repos/accountsRepo.js');
-
 let bcrypt = require('bcryptjs');
+import * as Express from 'express';
 
 import { BaseApi } from '../base.api';
 import { UnauthorizedException } from '../../framework/exceptions/exceptions';
 import { AuthService } from '../../framework/auth/auth.service';
-import { ResponseUtils } from '../../framework/utils/response.utils';
+import { AuthRepo } from '../../framework/auth/auth.repo';
+import { ITokenResponse } from './token-response.interface';
 
 export class AuthApi extends BaseApi {
 
-    private static repo = [];
+    constructor(private _authService: AuthService, private _authRepo: AuthRepo) {
+        super();
+    }
 
-    public static registerByEmail(req, res): void {
+    public registerByEmail(req: Express.Request, res: Express.Response): void {
         try {
             // Validate
-            let validData = req.body; // validation.validateRegisterByEmail(req.body);
+            let validData: any = req.body; // validation.validateRegisterByEmail(req.body);
 
             // Prep password
-            let hash = AuthApi.hash(validData.password);
+            let hash: string = this.hashPassword(validData.password);
 
             // trandorm for database
             let accountModel: any = {
@@ -28,98 +28,75 @@ export class AuthApi extends BaseApi {
                 passwordHash: hash
             };
 
-            AuthApi.repo.push(accountModel);
-            accountModel.accountId = AuthApi.repo.length;
-
             // insert
-            // repo.registerByEmail(accountModel)
-
-            // respond
-            // .then(function (accountId) {
-
-            // create response
-            let response = AuthApi.createTokenResponse(accountModel.accountId);
-
-            res.status(201).send(response);
-            // })
-            // .catch(function (err) {
-            // this.sendErrorResponse(err, res);
-            // })
-            // .done();
+            this._authRepo.createAccount(accountModel)
+                .then(accountId => {
+                    // create response
+                    let response: ITokenResponse = this.createTokenResponse(accountId);
+                    res.status(201).send(response);
+                })
+                .catch(err => {
+                    this.sendErrorResponse(err, res);
+                });
         } catch (err) {
-            AuthApi.sendErrorResponse(err, res);
+            this.sendErrorResponse(err, res);
         }
     };
 
-    public static signInByEmail(req, res): void {
+    public signInByEmail(req: Express.Request, res: Express.Response): void {
         let failedSignInMessage: string = 'Either the email or password is incorrect';
 
         try {
             // Validate
-            let validData = req.body; // validation.validateSignInByEmail(req.body);
+            let validData: any = req.body; // validation.validateSignInByEmail(req.body);
 
-            let authData;
-
-            console.log(JSON.stringify(AuthApi.repo));
-
-            for (let r of AuthApi.repo) {
-                if (r.email === validData.email) {
-                    authData = r;
-                    break;
-                }
-            };
-
-            // repo.auth.findByEmail(validData.email)
-                // .then(function (authData) {
+            this._authRepo.getAccountByEmail(validData.email)
+                .then(account => {
 
                     // check password
-                    console.log(JSON.stringify(authData));
-
-                    let match = AuthApi.compare(validData.password, authData.passwordHash);
+                    let match: boolean = this.compare(validData.password, account.passwordHash);
 
                     if (match === false) {
                         throw new UnauthorizedException(failedSignInMessage);
                     }
 
                     // create response
-                    let response = AuthApi.createTokenResponse(authData.Id);
-                    console.log(JSON.stringify(response));
+                    let response: ITokenResponse = this.createTokenResponse(account.Id);
                     res.status(200).send(response);
-                // })
-                // .catch(function (err) {
-                //     if (err.name === 'NotFoundException') {
-                //         err = new UnauthorizedException(failedSignInMessage);
-                //     }
+                })
+                .catch(err => {
+                    if (err.name === 'NotFoundException') {
+                        err = new UnauthorizedException(failedSignInMessage);
+                    }
 
-                //     this.sendErrorResponse(err, res);
-                // })
-                // .done();
-
-        } catch (err) {
-            throw err; // AuthApi.sendErrorResponse(err, res);
+                    this.sendErrorResponse(err, res);
+                });
+        }
+        catch (err) {
+            this.sendErrorResponse(err, res);
         }
     }
 
-    private static createTokenResponse(accountId) {
+    private createTokenResponse(accountId: number): ITokenResponse {
         // create token
-        let token = AuthService.createToken(accountId);
+        let token: string = new AuthService().createToken(accountId);
 
         // create response
-        let response = {
+        let response: ITokenResponse = {
             token: token
         };
 
         return response;
     }
 
-    private static hash(password) {
-        let salt = bcrypt.genSaltSync(10);
-        let hash = bcrypt.hashSync(password, salt);
+    private hashPassword(password): string {
+        let salt: string = bcrypt.genSaltSync(10);
+        let hash: string = bcrypt.hashSync(password, salt);
 
         return hash;
     };
 
-    private static compare(password, hash) {
+    private compare(password, hash): boolean {
         return bcrypt.compareSync(password, hash);
     };
 };

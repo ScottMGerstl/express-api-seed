@@ -1,52 +1,46 @@
 import { IAuthConfig } from '../config/config.interface';
 import { ConfigService } from '../config/config.service';
+import { UnauthorizedException } from '../exceptions/exceptions';
+import { ResponseUtils } from '../utils/response.utils';
+import { EncodingUtils } from '../utils/encoding.utils';
+import { JwtHeader, JwtPayload } from './jwt.interface';
 
 import * as moment from 'moment';
 import * as crypto from 'crypto';
 
 export class AuthService {
-    public static createToken(accountId) {
+    public createToken(accountId: number): string {
 
-        let header = {
+        let header: JwtHeader = {
             type: 'JWT',
             tkv: '0'
         };
 
         let authConfig: IAuthConfig = ConfigService.getAuthConfigs();
 
-        let payload = {
+        let payload: JwtPayload = {
             iss: authConfig.iss,
             sub: accountId,
             iat: moment().utc().unix(),
             exp: moment().utc().add(authConfig.validDays, 'days').unix()
         };
 
-        let encodedHeader = this.base64Encode(header);
-        let encodedPayload = this.base64Encode(payload);
+        let encodedHeader: string = EncodingUtils.base64Encode(header);
+        let encodedPayload: string = EncodingUtils.base64Encode(payload);
 
-        let unsignedToken = encodedHeader + '.' + encodedPayload;
+        let unsignedToken: string = encodedHeader + '.' + encodedPayload;
 
-        let signedToken = unsignedToken + '.' + this.getTokenSignature(unsignedToken);
+        let signedToken: string = unsignedToken + '.' + this.getTokenSignature(unsignedToken);
 
         return signedToken;
     }
 
-    private static base64Encode(obj) {
-        let base64Value = new Buffer(JSON.stringify(obj)).toString('base64');
-        return base64Value;
-    }
-
-    private static base64Decode(value) {
-        let result = new Buffer(value, 'base64').toString('utf8');
-        return result;
-    }
-
-    private static getTokenSignature(unsignedToken) {
+    public getTokenSignature(unsignedToken: string): string {
         let secret = ConfigService.getAuthConfigs().accountSecret;
 
         let hash = crypto.createHmac('sha512', secret);
         hash.update(unsignedToken);
-        let signature = hash.digest('base64');
+        let signature: string = hash.digest('base64');
 
         return signature;
     }

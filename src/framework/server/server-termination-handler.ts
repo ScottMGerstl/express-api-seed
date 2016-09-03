@@ -6,7 +6,7 @@ export class ServerTerminationHandler {
         this.signatures = ['SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGILL', 'SIGTRAP', 'SIGABRT', 'SIGBUS', 'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGUSR2', 'SIGTERM'];
     }
 
-    public init() {
+    public init(): void {
         process.on('exit', () => {
             this.terminate(null);
         });
@@ -18,7 +18,7 @@ export class ServerTerminationHandler {
         });
     }
 
-    private terminate(signature: string) {
+    private terminate(signature: string): void {
         if (signature) {
             console.log('%s: Received %s - terminating Tortoise API ...', new Date(Date.now()), signature);
             process.exit(1);

@@ -1,7 +1,8 @@
 import { LoggingService } from '../logging/logging.service';
+import * as Express from 'express';
 
 export class ResponseUtils {
-    public static sendErrorResponse (err, res): void {
+    public static sendErrorResponse (err: any, res: Express.Response): void {
         let responseCode: number = 500;
 
         let response: any = {};

@@ -4,6 +4,8 @@ import * as express from 'express';
 import * as bodyParser from 'body-parser'
 
 import { AuthHandler } from './framework/server/auth-handler';
+import { AuthService } from './framework/auth/auth.service';
+import { AuthRepo } from './framework/auth/auth.repo';
 import { RouteRegistry } from './framework/server/route-registry';
 import { ServerTerminationHandler } from './framework/server/server-termination-handler';
 
@@ -12,11 +14,15 @@ import { ConfigService } from './framework/config/config.service';
 import { IServerConfig } from './framework/config/config.interface';
 
 class Api {
-    private app;
+    private app: express.Express;
     private options: IServerOptions;
+    private authHandler: AuthHandler;
+    private authRepo: AuthRepo;
 
-    constructor(private _options: IServerOptions) {
+    constructor(private _options: IServerOptions, private _authHandler: AuthHandler, private _authRepo: AuthRepo) {
         this.options = _options;
+        this.authHandler = _authHandler;
+        this.authRepo = _authRepo;
     }
 
     public init() {
@@ -40,11 +46,11 @@ class Api {
         this.app.use(bodyParser.urlencoded({ extended: true }));
         this.app.use(bodyParser.json());
 
-        let routes: RouteRegistry = new RouteRegistry();
+        let routes: RouteRegistry = new RouteRegistry(this.authRepo);
         routes.registerPublicRoutes(this.app);
 
         // Implement authentication here when needed
-        this.app.use(AuthHandler.verifyAuthentication)
+        this.app.use((req, res, next) => this.authHandler.verifyAuthentication(req, res, next));
 
         routes.registerAuthenticatedRoutes(this.app);
     }
@@ -58,7 +64,10 @@ let options: IServerOptions = {
     port: settings.port
 };
 
+let authHandler: AuthHandler = new AuthHandler(new AuthService());
+let authRepo: AuthRepo = new AuthRepo();
+
 // Setup and start the server with config values
-let srvr: Api = new Api(options);
+let srvr: Api = new Api(options, authHandler, authRepo);
 srvr.init();
 srvr.start();

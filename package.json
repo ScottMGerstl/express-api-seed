@@ -5,7 +5,9 @@
   "main": "dist/server.js",
   "scripts": {
     "start": "node dist/server.js",
+    "retry": "npm run quick-build && npm run start",
     "build": "npm run clean && npm run typings && npm run lint && npm run tsc",
+    "quick-build": "npm run clean && npm run tsc",
     "clean": "rimraf ./bundles/ ./dist/ && npm run clean-src",
     "clean-src": "rimraf ./src/**/*.js ./src/**/*.d.ts",
     "lint": "tslint ./src/**/*.ts",
@@ -26,6 +28,7 @@
     "bcryptjs": "^2.3.0",
     "body-parser": "^1.15.0",
     "crypto": "0.0.3",
+    "es6-promise": "^3.2.1",
     "express": "^4.13.4",
     "moment": "^2.14.1"
   },
