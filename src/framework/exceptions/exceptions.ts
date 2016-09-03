@@ -15,7 +15,7 @@ export class BaseApiException implements IApiException {
 }
 
 export class UnauthorizedException extends BaseApiException {
-    constructor(message: string) {
+    constructor(message?: string) {
         super(message || 'You are not authorized to access this resource', 'UnauthorizedException', 401);
     }
 }

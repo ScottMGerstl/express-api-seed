@@ -3,12 +3,13 @@
 import * as express from 'express';
 import * as bodyParser from 'body-parser'
 
-import { RouteRegistry } from './server/route-registry';
-import { ServerTerminationHandler } from './server/server-termination-handler';
+import { AuthHandler } from './framework/server/auth-handler';
+import { RouteRegistry } from './framework/server/route-registry';
+import { ServerTerminationHandler } from './framework/server/server-termination-handler';
 
-import { IServerOptions } from './server/server-options.interface';
-import { ConfigService } from './config/config.service';
-import { IConfig } from './config/config.interface';
+import { IServerOptions } from './framework/server/server-options.interface';
+import { ConfigService } from './framework/config/config.service';
+import { IServerConfig } from './framework/config/config.interface';
 
 class Api {
     private app;
@@ -43,16 +44,18 @@ class Api {
         routes.registerPublicRoutes(this.app);
 
         // Implement authentication here when needed
+        this.app.use(AuthHandler.verifyAuthentication)
 
         routes.registerAuthenticatedRoutes(this.app);
     }
 }
 
 // Get and set config values
-let settings: IConfig = ConfigService.getConfigs();
+let settings: IServerConfig = ConfigService.getServerConfig();
+
 let options: IServerOptions = {
-    ipAddress: settings.apiLocation.ipAddress,
-    port: settings.apiLocation.port
+    ipAddress: settings.ipAddress,
+    port: settings.port
 };
 
 // Setup and start the server with config values

@@ -23,8 +23,11 @@
   "author": "Scott M Gerstl <scott.gerstl@outlook.com>",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.3.0",
     "body-parser": "^1.15.0",
-    "express": "^4.13.4"
+    "crypto": "0.0.3",
+    "express": "^4.13.4",
+    "moment": "^2.14.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",
