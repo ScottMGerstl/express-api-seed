@@ -6,7 +6,9 @@ import { ResponseUtils } from '../../framework/utils/response.utils';
 
 import * as moment from 'moment';
 import * as Express from 'express';
+import { Service } from 'typedi';
 
+@Service()
 export class AuthHandler {
     constructor(private _authService: AuthService) { }
 

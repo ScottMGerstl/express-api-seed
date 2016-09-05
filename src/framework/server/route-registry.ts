@@ -1,3 +1,5 @@
+import { Container } from 'typedi';
+
 import { HelloApi } from '../../apis/hello/hello.api';
 import { AuthApi } from '../../apis/auth/auth.api';
 import { AuthService } from '../auth/auth.service';
@@ -18,14 +20,13 @@ export class RouteRegistry {
         }
     };
 
-    constructor(private _authRepo: AuthRepo) {
-        let auth: AuthApi = new AuthApi(new AuthService(), this._authRepo);
-        let hello: HelloApi = new HelloApi(this._authRepo);
-
-        this.routes.nonAuth.get['/hello/greet'] = (req, res, next) => hello.sayHi(req, res);
+    constructor() {
+        let auth: AuthApi = Container.get(AuthApi);
         this.routes.nonAuth.post['/auth/register/email'] = (req, res, next) => auth.registerByEmail(req, res);
         this.routes.nonAuth.post['/auth/signin/email'] = (req, res, next) => auth.signInByEmail(req, res);
 
+        let hello: HelloApi = Container.get(HelloApi);
+        this.routes.nonAuth.get['/hello/greet'] = (req, res, next) => hello.sayHi(req, res);
         this.routes.auth.get['/hello/greet/me'] = (req, res, next) => hello.sayHiToMe(req, res);
     }
 

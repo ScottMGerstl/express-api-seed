@@ -1,9 +1,12 @@
+import { Service } from 'typedi';
+import * as Express from 'express';
+
 import { BaseApi } from '../base.api';
 import { AuthRepo } from '../../framework/auth/auth.repo';
 import { UnauthorizedException } from '../../framework/exceptions/exceptions';
 
-import * as Express from 'express';
 
+@Service()
 export class HelloApi extends BaseApi {
     constructor(private _authRepo: AuthRepo) {
         super();

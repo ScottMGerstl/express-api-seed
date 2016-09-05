@@ -1,7 +1,9 @@
 #!/bin/env node
 
+import 'reflect-metadata';
 import * as express from 'express';
 import * as bodyParser from 'body-parser'
+import { Container } from 'typedi';
 
 import { AuthHandler } from './framework/server/auth-handler';
 import { AuthService } from './framework/auth/auth.service';
@@ -13,16 +15,14 @@ import { IServerOptions } from './framework/server/server-options.interface';
 import { ConfigService } from './framework/config/config.service';
 import { IServerConfig } from './framework/config/config.interface';
 
-class Api {
+class Server {
     private app: express.Express;
     private options: IServerOptions;
     private authHandler: AuthHandler;
-    private authRepo: AuthRepo;
 
-    constructor(private _options: IServerOptions, private _authHandler: AuthHandler, private _authRepo: AuthRepo) {
+    constructor(private _options: IServerOptions, private _authHandler: AuthHandler) {
         this.options = _options;
         this.authHandler = _authHandler;
-        this.authRepo = _authRepo;
     }
 
     public init() {
@@ -46,7 +46,7 @@ class Api {
         this.app.use(bodyParser.urlencoded({ extended: true }));
         this.app.use(bodyParser.json());
 
-        let routes: RouteRegistry = new RouteRegistry(this.authRepo);
+        let routes: RouteRegistry = new RouteRegistry();
         routes.registerPublicRoutes(this.app);
 
         // Implement authentication here when needed
@@ -64,10 +64,9 @@ let options: IServerOptions = {
     port: settings.port
 };
 
-let authHandler: AuthHandler = new AuthHandler(new AuthService());
-let authRepo: AuthRepo = new AuthRepo();
+let authHandler: AuthHandler = Container.get(AuthHandler);
 
 // Setup and start the server with config values
-let srvr: Api = new Api(options, authHandler, authRepo);
+let srvr: Server = new Server(options, authHandler);
 srvr.init();
 srvr.start();

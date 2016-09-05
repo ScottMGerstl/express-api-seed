@@ -1,5 +1,6 @@
 let bcrypt = require('bcryptjs');
 import * as Express from 'express';
+import { Service } from 'typedi';
 
 import { BaseApi } from '../base.api';
 import { UnauthorizedException } from '../../framework/exceptions/exceptions';
@@ -7,6 +8,7 @@ import { AuthService } from '../../framework/auth/auth.service';
 import { AuthRepo } from '../../framework/auth/auth.repo';
 import { ITokenResponse } from './token-response.interface';
 
+@Service()
 export class AuthApi extends BaseApi {
 
     constructor(private _authService: AuthService, private _authRepo: AuthRepo) {
