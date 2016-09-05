@@ -1,5 +1,13 @@
 # express-api-seed
 
+Includes:
+* Server Ready-to-run
+* Dependency Injection
+* Config and Logging Services
+* Register and Sign In Endpoints
+* Single-location Route Registration
+* Custom Exception Handling
+
 ## Extending the api
 
 ### Example files:
