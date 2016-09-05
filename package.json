@@ -4,7 +4,7 @@
   "description": "seed project for creating a node api based on express",
   "main": "dist/server.js",
   "scripts": {
-    "start": "node dist/server.js",
+    "start": "node dist/main.js",
     "retry": "npm run quick-build && npm run start",
     "build": "npm run clean && npm run typings && npm run lint && npm run tsc",
     "quick-build": "npm run clean && npm run tsc",

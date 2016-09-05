@@ -3,11 +3,23 @@ import { IConfig, IAuthConfig, IServerConfig, IErrorTrackingConfig, IDatabaseCon
 
 export class ConfigService {
 
-    public static getAuthConfigs(): IAuthConfig {
-        return ConfigStore.configStore.auth;
-    }
-
+    /**
+     * gets the configurations for the server
+     *
+     * @static
+     * @returns {IServerConfig} values neeeded for server setup
+     */
     public static getServerConfig(): IServerConfig {
         return ConfigStore.configStore.server;
+    }
+
+    /**
+     * gets the config values needed for authentication
+     *
+     * @readonly
+     * @type {IAuthConfig} the config values needed for authentication
+     */
+    public get authConfigs(): IAuthConfig {
+        return ConfigStore.configStore.auth;
     }
 }

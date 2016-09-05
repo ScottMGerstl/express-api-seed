@@ -1,3 +1,5 @@
+import { Service } from 'typedi';
+
 import { AuthService } from '../auth/auth.service';
 import { EncodingUtils } from '../utils/encoding.utils';
 import { UnauthorizedException } from '../exceptions/exceptions';
@@ -6,28 +8,41 @@ import { ResponseUtils } from '../../framework/utils/response.utils';
 
 import * as moment from 'moment';
 import * as Express from 'express';
-import { Service } from 'typedi';
 
 @Service()
 export class AuthHandler {
     constructor(private _authService: AuthService) { }
 
+    /**
+     * Use this to verify authentication in the express server
+     *
+     * @param {Express.Request} req
+     * @param {Express.Response} res
+     * @param {Express.NextFunction} next
+     */
     public verifyAuthentication(req: Express.Request, res: Express.Response, next: Express.NextFunction): void {
         try {
-            let accountId: number = null;
-
+            // Parse token
             let tokenParts: string[] = this.parseAuthenticationHeader(req);
+
+            // Check the token for tampering
             let payloadPart: string = this.comparePayloadWithSignature(tokenParts);
 
+            // Parse the payload
             let payload: JwtPayload = EncodingUtils.base64Decode<JwtPayload>(payloadPart);
 
+            // Check if the token is in effective range
             this.checkEffectiveRange(payload);
 
+            // check for the accountId
             if (!payload.sub) {
                 throw new UnauthorizedException();
             }
 
+            // add accountId to request for easy handling
             req.body.accountId = payload.sub;
+
+            // continue
             next();
         }
         catch (err) {
@@ -36,6 +51,7 @@ export class AuthHandler {
                 err = new UnauthorizedException();
             }
 
+            // Send the response
             ResponseUtils.sendErrorResponse(err, res);
         }
     }

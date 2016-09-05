@@ -1,12 +1,12 @@
 let bcrypt = require('bcryptjs');
 import * as Express from 'express';
 import { Service } from 'typedi';
-
 import { BaseApi } from '../base.api';
 import { UnauthorizedException } from '../../framework/exceptions/exceptions';
+
 import { AuthService } from '../../framework/auth/auth.service';
 import { AuthRepo } from '../../framework/auth/auth.repo';
-import { ITokenResponse } from './token-response.interface';
+import { IAuthResponse } from './auth-response.interface';
 
 @Service()
 export class AuthApi extends BaseApi {
@@ -34,7 +34,7 @@ export class AuthApi extends BaseApi {
             this._authRepo.createAccount(accountModel)
                 .then(accountId => {
                     // create response
-                    let response: ITokenResponse = this.createTokenResponse(accountId);
+                    let response: IAuthResponse = this.createResponse(accountId);
                     res.status(201).send(response);
                 })
                 .catch(err => {
@@ -63,7 +63,7 @@ export class AuthApi extends BaseApi {
                     }
 
                     // create response
-                    let response: ITokenResponse = this.createTokenResponse(account.Id);
+                    let response: IAuthResponse = this.createResponse(account.Id);
                     res.status(200).send(response);
                 })
                 .catch(err => {
@@ -79,12 +79,12 @@ export class AuthApi extends BaseApi {
         }
     }
 
-    private createTokenResponse(accountId: number): ITokenResponse {
+    private createResponse(accountId: number): IAuthResponse {
         // create token
-        let token: string = new AuthService().createToken(accountId);
+        let token: string = this._authService.createToken(accountId);
 
         // create response
-        let response: ITokenResponse = {
+        let response: IAuthResponse = {
             token: token
         };
 

@@ -1,15 +1,16 @@
-import { Container } from 'typedi';
+import { Service } from 'typedi';
+import * as Express from 'express';
 
-import { HelloApi } from '../../apis/hello/hello.api';
 import { AuthApi } from '../../apis/auth/auth.api';
-import { AuthService } from '../auth/auth.service';
-import { AuthRepo } from '../auth/auth.repo';
+import { HelloApi } from '../../apis/hello/hello.api';
 
+@Service()
 export class RouteRegistry {
     private routes = {
         nonAuth: {
             get: {},
             post: {},
+            put: {},
             delete: {}
         },
         auth: {
@@ -20,25 +21,26 @@ export class RouteRegistry {
         }
     };
 
-    constructor() {
-        let auth: AuthApi = Container.get(AuthApi);
+    constructor(private auth: AuthApi, private hello: HelloApi) {
+
+        // auth
         this.routes.nonAuth.post['/auth/register/email'] = (req, res, next) => auth.registerByEmail(req, res);
         this.routes.nonAuth.post['/auth/signin/email'] = (req, res, next) => auth.signInByEmail(req, res);
 
-        let hello: HelloApi = Container.get(HelloApi);
+        // hello
         this.routes.nonAuth.get['/hello/greet'] = (req, res, next) => hello.sayHi(req, res);
         this.routes.auth.get['/hello/greet/me'] = (req, res, next) => hello.sayHiToMe(req, res);
     }
 
-    public registerPublicRoutes(app): void {
+    public registerPublicRoutes(app: Express.Express): void {
         this.registerRouteCollection(app, this.routes.nonAuth);
     }
 
-    public registerAuthenticatedRoutes(app): void {
+    public registerAuthenticatedRoutes(app: Express.Express): void {
         this.registerRouteCollection(app, this.routes.auth);
     }
 
-    private registerRouteCollection(app, routeCollection): void {
+    private registerRouteCollection(app: Express.Express, routeCollection: any): void {
         for (let verb in routeCollection) {
             for (let h in routeCollection[verb]) {
                 app[verb](h, routeCollection[verb][h]);

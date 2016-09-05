@@ -1,14 +1,18 @@
-import { IAuthConfig } from '../config/config.interface';
-import { ConfigService } from '../config/config.service';
-import { UnauthorizedException } from '../exceptions/exceptions';
-import { ResponseUtils } from '../utils/response.utils';
-import { EncodingUtils } from '../utils/encoding.utils';
-import { JwtHeader, JwtPayload } from './jwt.interface';
-
 import * as moment from 'moment';
 import * as crypto from 'crypto';
 
+import { Service } from 'typedi';
+
+import { IAuthConfig } from '../config/config.interface';
+import { ConfigService } from '../config/config.service';
+import { EncodingUtils } from '../utils/encoding.utils';
+import { JwtHeader, JwtPayload } from './jwt.interface';
+
+@Service()
 export class AuthService {
+
+    constructor(private _configService: ConfigService) { }
+
     public createToken(accountId: number): string {
 
         let header: JwtHeader = {
@@ -16,7 +20,7 @@ export class AuthService {
             tkv: '0'
         };
 
-        let authConfig: IAuthConfig = ConfigService.getAuthConfigs();
+        let authConfig: IAuthConfig = this._configService.authConfigs;
 
         let payload: JwtPayload = {
             iss: authConfig.iss,
@@ -36,7 +40,7 @@ export class AuthService {
     }
 
     public getTokenSignature(unsignedToken: string): string {
-        let secret = ConfigService.getAuthConfigs().accountSecret;
+        let secret = this._configService.authConfigs.accountSecret;
 
         let hash = crypto.createHmac('sha512', secret);
         hash.update(unsignedToken);

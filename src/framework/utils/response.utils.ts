@@ -2,6 +2,14 @@ import { LoggingService } from '../logging/logging.service';
 import * as Express from 'express';
 
 export class ResponseUtils {
+
+    /**
+     * Handles resolving an exception into the correct type of error and send the response
+     *
+     * @static
+     * @param {*} err error to handle
+     * @param {Express.Response} res
+     */
     public static sendErrorResponse (err: any, res: Express.Response): void {
         let responseCode: number = 500;
 
@@ -20,6 +28,7 @@ export class ResponseUtils {
 
         res.status(responseCode).send(response);
 
+        // If it was an unhandled error, log the error
         if (responseCode === 500) {
             LoggingService.log(err);
         }
