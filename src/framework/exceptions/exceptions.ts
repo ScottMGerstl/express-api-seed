@@ -65,3 +65,19 @@ export class ConflictException extends BaseApiException {
         super(message, 'ConflictException', 409);
     }
 }
+
+/**
+ * Exception to indicate validation constraints have been violated. errors are retained on the exception
+ *
+ * @export
+ * @class ValidationException
+ * @extends {BaseApiException}
+ */
+export class ValidationException extends BaseApiException {
+    validationErrors: any;
+
+    constructor(message: string, validationErrors: any) {
+        super(message, 'ValidationException', 422);
+        this.validationErrors = validationErrors;
+    }
+}
