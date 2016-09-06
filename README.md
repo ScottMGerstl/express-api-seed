@@ -121,6 +121,8 @@ This folder contains:
 * `config-store.ts`: the variable that holds all config values
 * `config.interface.ts`: the file that holds all the interfaces defining the configs
 
+**Make sure** to set [your own values](https://github.com/ScottMGerstl/express-api-seed/blob/master/src/framework/config/config-store.ts).
+
 ## Auth
 
 Authentication is configured in the [`src/framework/auth/jwt.service.ts`](https://github.com/ScottMGerstl/express-api-seed/blob/master/src/framework/auth/jwt.service.ts) file. There is a basic JWT implemented here; it currently contains the following public claims:
@@ -130,7 +132,11 @@ Authentication is configured in the [`src/framework/auth/jwt.service.ts`](https:
 * exp
 * sub
 
-It encrypts based on sha512 and uses the ConfigService to retrieve settings for the secret key and the number of days the token is valid
+It encrypts based on sha512 and uses the ConfigService to retrieve settings for:
+
+* the secret key
+* the number of days the token is valid
+* the issuer (iss) of your token
 
 If you would like to implement your own scheme you may adjust this file.
 
