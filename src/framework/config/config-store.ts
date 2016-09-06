@@ -10,5 +10,8 @@ export var configStore: IConfig = {
         iss: 'mysite.com',
         accountSecret: '1234567890',
         validDays: 7
+    },
+    errorTracking: {
+        accessToken: 'putYourTokenHere'
     }
 };

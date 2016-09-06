@@ -2,6 +2,7 @@ export interface IConfig {
     environment: string;
     server: IServerConfig;
     auth: IAuthConfig;
+    errorTracking: IErrorTrackingConfig;
 }
 
 export interface IErrorTrackingConfig {

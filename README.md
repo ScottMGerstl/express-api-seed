@@ -2,11 +2,14 @@
 
 Includes:
 * Server Ready-to-run
-* Dependency Injection
+* Dependency Injection via [typedi](https://github.com/pleerock/typedi)
+* Authentication
+    * bcrypt
+    * jwt
+    * Register and Sign In Endpoints
 * Config and Logging Services
-* Register and Sign In Endpoints
+* Exception & Error Handling Framework
 * Single-location Route Registration
-* Custom Exception Handling
 
 ## Extending the api
 
@@ -108,3 +111,44 @@ npm run retry
 ```
 
 This will stop the API process, run the quick-build command (only what is necessary to rebuild the files) and start the server again
+
+## Config Service
+
+The config service and supporting classes are in [`src/framework/config`](https://github.com/ScottMGerstl/express-api-seed/tree/master/src/framework/config).
+
+This folder contains:
+* `config.service.ts`: the instantiable class that should be used to get configs
+* `config-store.ts`: the variable that holds all config values
+* `config.interface.ts`: the file that holds all the interfaces defining the configs
+
+## Auth
+
+Authentication is configured in the [`src/framework/auth/jwt.service.ts`](https://github.com/ScottMGerstl/express-api-seed/blob/master/src/framework/auth/jwt.service.ts) file. There is a basic JWT implemented here; it currently contains the following public claims:
+
+* iss
+* iat
+* exp
+* sub
+
+It encrypts based on sha512 and uses the ConfigService to retrieve settings for the secret key and the number of days the token is valid
+
+If you would like to implement your own scheme you may adjust this file.
+
+## Logging Service
+
+The logging service is in [`src/framework/logging`](https://github.com/ScottMGerstl/express-api-seed/tree/master/src/framework/logging) There is a basic, non-blocking implementation that logs to the console.
+
+If you would like to log to a 3rd party, add the functionality in the `logging.service.ts` file. The service makes use of the ConfigService and imports the error tracking configs. Modify the IErrorTrackingConfig interface and ConfigStore in the config folder as needed.
+
+## Exception & Error Handling Framework
+
+There is a set of custom API exceptions in the [`src/framework/exceptions/exceptions.ts`](https://github.com/ScottMGerstl/express-api-seed/blob/master/src/framework/exceptions/exceptions.ts) file. These include:
+
+* Unauthorized Exception
+* Forbidden Exception
+* NotFound Exception
+* Conflict Exception
+* Validation Exception
+
+These custom exceptions make use of BaseApiException. Everything extending from BaseApiException is explicitly handled by the ResponseUtils which is implemented by the BaseApi abstract class. This allows you to throw a handled exception all the way out to the api/controller, and it will take care of creating the error response. If an error that does not extend from BaseApiException is recieved, it will assume it was unhandled, assign a 500 to the response and log the error using the LoggingService.
+

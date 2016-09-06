@@ -22,4 +22,8 @@ export class ConfigService {
     public get authConfigs(): IAuthConfig {
         return ConfigStore.configStore.auth;
     }
+
+    public get errorTrackingConfigs(): IErrorTrackingConfig {
+        return ConfigStore.configStore.errorTracking;
+    }
 }

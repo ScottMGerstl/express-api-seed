@@ -4,14 +4,14 @@ import { Service } from 'typedi';
 import { BaseApi } from '../base.api';
 import { UnauthorizedException } from '../../framework/exceptions/exceptions';
 
-import { AuthService } from '../../framework/auth/auth.service';
+import { JwtService } from '../../framework/auth/jwt.service';
 import { AuthRepo } from '../../framework/auth/auth.repo';
 import { IAuthResponse } from './auth-response.interface';
 
 @Service()
 export class AuthApi extends BaseApi {
 
-    constructor(private _authService: AuthService, private _authRepo: AuthRepo) {
+    constructor(private _jwtService: JwtService, private _authRepo: AuthRepo) {
         super();
     }
 
@@ -81,7 +81,7 @@ export class AuthApi extends BaseApi {
 
     private createResponse(accountId: number): IAuthResponse {
         // create token
-        let token: string = this._authService.createToken(accountId);
+        let token: string = this._jwtService.createToken(accountId);
 
         // create response
         let response: IAuthResponse = {

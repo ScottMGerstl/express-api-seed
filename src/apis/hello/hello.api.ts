@@ -21,7 +21,7 @@ export class HelloApi extends BaseApi {
                 res.status(200).send({ message: 'Hey, ' + account.name });
             })
             .catch(err => {
-                this.sendErrorResponse(new UnauthorizedException(), res);
+                this.sendErrorResponse(err, res);
             });
     }
 }

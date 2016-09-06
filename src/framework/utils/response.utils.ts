@@ -19,6 +19,7 @@ export class ResponseUtils {
             responseCode = err.code;
         }
 
+        // Be explicit in the information returned. Don't return a stack trace to a user.
         response.message = err.message;
 
         if (err.name === 'ValidationException') {

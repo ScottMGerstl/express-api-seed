@@ -9,7 +9,7 @@ import { EncodingUtils } from '../utils/encoding.utils';
 import { JwtHeader, JwtPayload } from './jwt.interface';
 
 @Service()
-export class AuthService {
+export class JwtService {
 
     constructor(private _configService: ConfigService) { }
 

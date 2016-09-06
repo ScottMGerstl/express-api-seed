@@ -1,6 +1,6 @@
 import { Service } from 'typedi';
 
-import { AuthService } from '../auth/auth.service';
+import { JwtService } from '../auth/jwt.service';
 import { EncodingUtils } from '../utils/encoding.utils';
 import { UnauthorizedException } from '../exceptions/exceptions';
 import { JwtPayload } from '../auth/jwt.interface';
@@ -11,7 +11,7 @@ import * as Express from 'express';
 
 @Service()
 export class AuthHandler {
-    constructor(private _authService: AuthService) { }
+    constructor(private _jwtService: JwtService) { }
 
     /**
      * Use this to verify authentication in the express server
@@ -87,7 +87,7 @@ export class AuthHandler {
         let payload: string = tokenParts[1];
         let signature: string = tokenParts[2];
 
-        if (this._authService.getTokenSignature(header + '.' + payload) === signature) {
+        if (this._jwtService.getTokenSignature(header + '.' + payload) === signature) {
             return payload;
         }
         else {
