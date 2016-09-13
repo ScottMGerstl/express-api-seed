@@ -3,8 +3,7 @@ import { IConfig } from './config.interface';
 export var configStore: IConfig = {
     environment: 'local',
     server: {
-        ipAddress: '127.0.0.1',
-        port: 8088
+        port: process.env.PORT || 8088
     },
     auth: {
         iss: 'mysite.com',

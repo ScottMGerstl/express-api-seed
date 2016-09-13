@@ -47,8 +47,8 @@ export class Server {
      * @param {IServerOptions} options ip address and port to run on
      */
     public start(options: IServerOptions) {
-        this.app.listen(options.port, options.ipAddress, () => {
-            console.log('%s: Node server started on %s:%s ...', new Date(Date.now()), options.ipAddress, options.port);
-        });
+        this.app.listen(options.port, () => {
+            console.log('%s: Node server started ...', new Date(Date.now()));
+        })
     }
 }

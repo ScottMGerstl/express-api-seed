@@ -7,7 +7,8 @@ Includes:
     * bcrypt
     * jwt
     * Register and Sign In Endpoints
-* Config and Logging Services
+* Config Service with process.env
+* Logging Service
 * Exception & Error Handling Framework
 * Single-location Route Registration
 
@@ -88,6 +89,14 @@ Content-Type: application/json
 ```
 
 ## Building and Running the API
+
+### First Things First
+
+```
+npm i
+npm run build
+npm run start
+```
 
 ### Building
 

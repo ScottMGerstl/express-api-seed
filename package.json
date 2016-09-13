@@ -2,7 +2,7 @@
   "name": "express-api-seed",
   "version": "0.1.0",
   "description": "seed project for creating a node api based on express",
-  "main": "dist/server.js",
+  "main": "dist/main.js",
   "scripts": {
     "start": "node dist/main.js",
     "retry": "npm run quick-build && npm run start",

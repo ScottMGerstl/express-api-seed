@@ -10,7 +10,6 @@ export interface IErrorTrackingConfig {
 }
 
 export interface IServerConfig {
-    ipAddress: string;
     port: number;
 }
 
