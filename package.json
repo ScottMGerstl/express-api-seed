@@ -12,7 +12,7 @@
     "clean-src": "rimraf ./src/**/*.js ./src/**/*.d.ts",
     "lint": "tslint ./src/**/*.ts",
     "tsc": "tsc --project . --declaration",
-    "test": "npm run build && npm run coverage",
+    "test": "npm run quick-build && npm run coverage",
     "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha -- ./dist/test/**/*.spec.js -R spec",
     "typings": "typings install"
   },
