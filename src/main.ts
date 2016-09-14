@@ -12,7 +12,6 @@ import { IServerConfig } from './framework/config/config.interface';
 let settings: IServerConfig = ConfigService.getServerConfig();
 
 let options: IServerOptions = {
-    ipAddress: settings.ipAddress,
     port: settings.port
 };
 
